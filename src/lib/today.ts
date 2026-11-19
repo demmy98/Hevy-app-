@@ -10,7 +10,9 @@ const AUTO_SYNC_MS = 30 * 60 * 1000;
 export async function loadTodayPlan() {
   let syncError: string | null = null;
   const last = await getMeta("hevy_last_sync");
-  if (process.env.HEVY_API_KEY && (!last || Date.now() - +new Date(last) > AUTO_SYNC_MS)) {
+  if (!process.env.HEVY_API_KEY?.trim()) {
+    syncError = "HEVY_API_KEY isn't set on the server. Add it in Vercel → Settings → Environment Variables, then redeploy.";
+  } else if (!last || Date.now() - +new Date(last) > AUTO_SYNC_MS) {
     try {
       await syncHevy();
     } catch (e) {

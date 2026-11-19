@@ -47,8 +47,8 @@ export default async function Today() {
       {workoutCount === 0 && (
         <div className="card">
           <h2>Connect Hevy</h2>
-          <p>No workouts synced yet. Set <code>HEVY_API_KEY</code> and press sync.</p>
-          {syncError && <p className="error">{syncError}</p>}
+          <p>No workouts synced yet.</p>
+          {syncError ? <p className="error">{syncError}</p> : <p>Press <b>Sync Hevy</b> at the bottom of the page.</p>}
         </div>
       )}
 

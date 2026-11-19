@@ -6,10 +6,12 @@ import { deleteWorkouts, getMeta, replaceTemplates, setMeta, upsertWorkouts } fr
 const BASE = "https://api.hevyapp.com/v1";
 
 async function get<T>(path: string): Promise<T> {
-  const key = process.env.HEVY_API_KEY;
+  const key = process.env.HEVY_API_KEY?.trim();
   if (!key) throw new Error("HEVY_API_KEY is not set");
   const res = await fetch(BASE + path, { headers: { "api-key": key, accept: "application/json" }, cache: "no-store" });
-  if (!res.ok) throw new Error(`Hevy API ${path} → ${res.status} ${await res.text().catch(() => "")}`);
+  if (res.status === 401 || res.status === 403)
+    throw new Error("Hevy rejected the API key. Check HEVY_API_KEY in Vercel (no spaces) and that Hevy Pro is active.");
+  if (!res.ok) throw new Error(`Hevy API ${path.split("?")[0]} → ${res.status}`);
   return res.json() as Promise<T>;
 }
 
